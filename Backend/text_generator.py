@@ -58,6 +58,7 @@ def get_gemini_client():
     """
     Create and return a Gemini API client.
     """
+    ensure_api_keys()
 
     api_key = (
         os.getenv("GEMINI_API_KEY")
@@ -67,7 +68,7 @@ def get_gemini_client():
 
     if not api_key:
         raise ValueError(
-            "Gemini API key is not configured."
+            "Gemini API key is not configured. Set GEMINI_API_KEY in the environment or save it on the home page."
         )
 
     return genai.Client(
@@ -175,7 +176,7 @@ Important:
 
         # Generate response
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt
         )
 

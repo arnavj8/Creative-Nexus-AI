@@ -53,16 +53,18 @@ def get_gemini_client():
     """
     Create a Gemini client using the configured API key.
     """
+    ensure_api_keys()
 
     api_key = (
         os.getenv("GEMINI_API_KEY")
         or os.getenv("GEN_API_KEY")
+        or GEMINI_API_KEY
     )
 
     if not api_key:
         raise ValueError(
             "Gemini API key is not configured. "
-            "Set GEMINI_API_KEY in the environment."
+            "Set GEMINI_API_KEY in the environment or save it on the home page."
         )
 
     return genai.Client(api_key=api_key)
@@ -115,7 +117,7 @@ def generate_meme_content(
         )
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=gemini_prompt
         )
 

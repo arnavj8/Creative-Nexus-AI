@@ -79,6 +79,7 @@ def get_gemini_client():
     Uses GEMINI_API_KEY as the primary environment variable
     and GEN_API_KEY as a backward-compatible fallback.
     """
+    ensure_api_keys()
 
     api_key = (
         os.getenv("GEMINI_API_KEY")
@@ -89,7 +90,7 @@ def get_gemini_client():
     if not api_key:
         raise ValueError(
             "Gemini API key is not configured. "
-            "Set GEMINI_API_KEY in the environment."
+            "Set GEMINI_API_KEY in the environment or save it via home page."
         )
 
     return genai.Client(api_key=api_key)
@@ -440,7 +441,7 @@ Return the blog in exactly this JSON structure:
         # -------------------------------------------------
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt
         )
 
@@ -458,35 +459,38 @@ Return the blog in exactly this JSON structure:
         )
 
         return {
-            "error": "Empty response from Gemini model"
+            "error": "Failed to generate blog content from Gemini."
         }
 
     except Exception as e:
         logging.error(
-            f"Error generating blog for topic "
-            f"'{topic}': {str(e)}"
+            f"Gemini blog generation error: {e}"
         )
 
         return {
-            "error": (
-                f"Blog generation error: {str(e)}"
-            )
+            "error": f"Gemini error: {str(e)}"
         }
 
 
 # =========================================================
-# GENERATE IMAGE FROM HUGGING FACE
+# GENERATE IMAGE FROM PROMPT
 # =========================================================
 
 def generate_image_from_prompt(
     image_prompt,
     output_path
 ):
-    try:
+    """
+    Generate an image using Hugging Face Stable Diffusion.
+    """
 
-        if not HF_API_TOKEN:
-            logging.error(
-                "HF_API_TOKEN is not configured."
+    try:
+        hf_token = os.getenv("HF_API_TOKEN") or HF_API_TOKEN
+
+        if not hf_token:
+            logging.warning(
+                "HF_API_TOKEN is not configured. "
+                "Skipping image generation."
             )
 
             return None
@@ -498,7 +502,7 @@ def generate_image_from_prompt(
         )
 
         headers = {
-            "Authorization": f"Bearer {HF_API_TOKEN}"
+            "Authorization": f"Bearer {hf_token}"
         }
 
         payload = {

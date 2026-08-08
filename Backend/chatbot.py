@@ -40,12 +40,12 @@ try:
         or os.getenv("GEN_API_KEY")
     )
 
-    GITHUB_REPO_URL = os.getenv("GITHUB_REPO_URL")
+    GITHUB_REPO_URL = os.getenv("GITHUB_REPO_URL", "https://github.com/arnavj8/Creative-Nexus-AI")
 
     logging.info(
         "Chatbot API configuration - "
         f"Gemini: {'Set' if GEMINI_API_KEY else 'Not set'}, "
-        f"GitHub URL: {'Set' if GITHUB_REPO_URL else 'Not set'}"
+        f"GitHub URL: {GITHUB_REPO_URL}"
     )
 
 except Exception as e:
@@ -59,7 +59,8 @@ except Exception as e:
     )
 
     GITHUB_REPO_URL = os.getenv(
-        "GITHUB_REPO_URL"
+        "GITHUB_REPO_URL",
+        "https://github.com/arnavj8/Creative-Nexus-AI"
     )
 
 
@@ -71,6 +72,7 @@ def get_gemini_client():
     """
     Create a Gemini client using the configured API key.
     """
+    ensure_api_keys()
 
     api_key = (
         os.getenv("GEMINI_API_KEY")
@@ -141,16 +143,21 @@ class KnowledgeBase:
             # Validate environment variables
             # -------------------------------------------------
 
-            if not GITHUB_REPO_URL:
-                raise ValueError(
-                    "GITHUB_REPO_URL not set in "
-                    "environment variables"
-                )
+            ensure_api_keys()
+            gemini_key = (
+                os.getenv("GEMINI_API_KEY")
+                or os.getenv("GEN_API_KEY")
+                or GEMINI_API_KEY
+            )
+            repo_url = (
+                os.getenv("GITHUB_REPO_URL")
+                or GITHUB_REPO_URL
+                or "https://github.com/arnavj8/Creative-Nexus-AI"
+            )
 
-            if not GEMINI_API_KEY:
+            if not gemini_key:
                 raise ValueError(
-                    "GEMINI_API_KEY not set in "
-                    "environment variables"
+                    "GEMINI_API_KEY is not configured."
                 )
 
             # -------------------------------------------------
@@ -169,7 +176,7 @@ class KnowledgeBase:
 
             self.embeddings = GoogleGenerativeAIEmbeddings(
                 model="models/embedding-001",
-                google_api_key=GEMINI_API_KEY
+                google_api_key=gemini_key
             )
 
             logging.info(
@@ -727,7 +734,7 @@ Additional Instructions:
             # -------------------------------------------------
 
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemini-2.0-flash",
                 contents=prompt
             )
 
