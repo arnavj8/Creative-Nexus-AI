@@ -529,8 +529,8 @@ document.addEventListener('DOMContentLoaded', checkApiKeys);
       // Validation patterns
       const patterns = {
           mongoUri: /^mongodb(?:\+srv)?:\/\/[^\s]+$/,
-          geminiKey: /^[A-Za-z0-9-_]{39}$/, 
-          huggingfaceKey: /^hf_[A-Za-z0-9]{34}$/
+          geminiKey: /^(AQ\.[A-Za-z0-9._-]+|[A-Za-z0-9._-]{20,})$/, 
+          huggingfaceKey: /^hf_[A-Za-z0-9]{20,}$/
       };
       
       let validations = {
@@ -562,7 +562,8 @@ document.addEventListener('DOMContentLoaded', checkApiKeys);
       }
       
       function validateGeminiKey() {
-          const key = document.getElementById('geminiKey').value.trim();
+          let key = document.getElementById('geminiKey').value.trim();
+          key = key.replace(/^["']|["']$/g, '');
           const errorSpan = document.getElementById('geminiKeyError');
           
           if (!key) {
@@ -579,7 +580,8 @@ document.addEventListener('DOMContentLoaded', checkApiKeys);
       }
       
       function validateHuggingFaceKey() {
-          const key = document.getElementById('huggingfaceKey').value.trim();
+          let key = document.getElementById('huggingfaceKey').value.trim();
+          key = key.replace(/^["']|["']$/g, '');
           const errorSpan = document.getElementById('huggingfaceKeyError');
           
           if (!key) {
@@ -596,9 +598,9 @@ document.addEventListener('DOMContentLoaded', checkApiKeys);
       }
       
       async function saveConfig() {
-          const mongoUri = document.getElementById('mongoUri').value.trim();
-          const geminiKey = document.getElementById('geminiKey').value.trim();
-          const huggingfaceKey = document.getElementById('huggingfaceKey').value.trim();
+          let mongoUri = document.getElementById('mongoUri').value.trim();
+          let geminiKey = document.getElementById('geminiKey').value.trim().replace(/^["']|["']$/g, '');
+          let huggingfaceKey = document.getElementById('huggingfaceKey').value.trim().replace(/^["']|["']$/g, '');
           const statusDiv = document.getElementById('setupStatus');
           const saveButton = document.getElementById('saveButton');
       

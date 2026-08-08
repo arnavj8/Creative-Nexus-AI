@@ -67,19 +67,22 @@ class SetupConfig(BaseModel):
 
     @validator('mongo_uri')
     def validate_mongo_uri(cls, v):
+        v = v.strip().strip("'\"")
         if not v.startswith('mongodb'):
             raise ValueError('Invalid MongoDB URI')
         return v
 
     @validator('gemini_key')
     def validate_gemini_key(cls, v):
-        if not len(v) == 39:  
+        v = v.strip().strip("'\"")
+        if len(v) < 15:  
             raise ValueError('Invalid Gemini API key')
         return v
 
     @validator('huggingface_key')
     def validate_huggingface_key(cls, v):
-        if not len(v) == 37: 
+        v = v.strip().strip("'\"")
+        if len(v) < 15: 
             raise ValueError('Invalid HuggingFace API key')
         return v
     
