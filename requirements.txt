@@ -1,12 +1,12 @@
 fastapi
 uvicorn
-google-generativeai
+google-genai
 requests
 pillow
 python-dotenv
 pathlib
-Wikipedia-API 
-arxiv 
+Wikipedia-API
+arxiv
 newsapi-python
 wikipedia
 markdown
@@ -26,5 +26,3 @@ gitpython
 python-multipart
 langchain-text-splitters
 faiss-cpu
-
--e .
